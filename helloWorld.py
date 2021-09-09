@@ -29,4 +29,44 @@ async def read_item_intOnly(parameter_id: int):
 
 #Passing in anything else will just throw you an error.
 
-#Change for git stuff. Another one
+#Order matters:
+#If you want to do something like below, you need to make sure the fixed path is declared first
+
+@myFirstApp.get("/users/me") #The fixed path
+async def read_user_me():
+    return {"user_id": "the current user's id"}
+
+@myFirstApp.get("/users/{user_id}") #The path w/ a parameter
+async def read_user(user_id: str):
+    return {"user_id": user_id}
+
+#Going to localhost:8000/users/me will run the first (fixed) method
+#But going to localhost:8000/users/'anything else' will run the second one
+
+# Predefined values (enums):
+from enum import Enum
+
+#Here is a string enum:
+class ModelName(str, Enum):
+    alexnet = "alexnet"
+    resnet  = "resnet"
+    lenet   = "lenet"
+
+#Using the enum
+@myFirstApp.get("/models/{model_name}")
+async def get_model(model_name: ModelName):
+    if model_name == ModelName.alexnet:
+        return {"model_name": model_name, "message": "Selected Alex Net"}
+    
+    if model_name == ModelName.resnet:
+        return {"model_name": model_name, "message": "Selected Res Net"}
+
+        
+    return {"model_name": model_name, "message": "Selected Lenet"}
+
+#Passing entire file path as an argument/parameter:
+@myFirstApp.get("/files/{file_path:path}") #It is conventionish to put a double slash before the file path to make it easier to read, but not needed
+async def read_files(file_path: str):
+    return {"file_path": file_path}
+
+    
