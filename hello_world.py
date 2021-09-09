@@ -11,7 +11,7 @@ myFirstApp = FastAPI() #Create instance of FastAPI
 #Async is asynchronous: https://fastapi.tiangolo.com/async/#in-a-hurry
 #Get is an HTTPS operator
 
-@myFirstApp.get("/") #Path that the the function below us in charge of handling. 
+@myFirstApp.get("/") #Path that the the function below us in charge of handling.
 async def root():
     #This function gets called by FastAPI everytime it recievews a request to the URL "/""
     return {"message": "Hello World"}
@@ -30,7 +30,7 @@ async def read_item(parameter_id):
 
 #This forces you to pass in parameter id as an integer only
 @myFirstApp.get("/testParametersIntOnly/{parameter_id}")
-async def read_item_intOnly(parameter_id: int):
+async def read_item_int_only(parameter_id: int):
     return {"parameter_id": parameter_id}
 
 #Passing in anything else will just throw you an error.
@@ -74,4 +74,33 @@ async def get_model(model_name: ModelName):
 async def read_files(file_path: str):
     return {"file_path": file_path}
 
+# ~~~ Query Parameters
+# fastapi.tiangolo.com/tutorial/query-params/
+# Any function parameters that are not part of the path parameters are called query parameters.
+
+fake_items_db = [{"item_name": "Foo"}, {"item_name": "Bar"}, {"item_name": "Baz"}]
+
+#See that parameters are not part of path so they become query:
+@myFirstApp.get("/items/")
+async def read_item(skip: int = 0, limit: int = 10):
+    #default values of query params are set and types enforced
+    return fake_items_db[skip : skip + limit]
+
+#Query Request example:
+#localhost:8000/items/?skip=0&limit=10
     
+#Optional Parameters:
+from typing import Optional
+
+#Use optional library and set default to null/none:
+@myFirstApp.get("/itemsOpt/{item_id}")
+async def read_item_opt(item_id: str, q: Optional[str] = None):
+    if q:
+        return {"item_id": item_id, "q": q}
+    return {"item_id": item_id}
+
+#This works with or without the opt. query param q.
+#localhost:8000/itemsOpt/hello
+#localhost:8000/itemsOpt/hello/?q=thisIsOptional
+
+#If you want to make the query parameters mandatory, then just don't give a default val

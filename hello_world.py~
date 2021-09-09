@@ -10,6 +10,7 @@ myFirstApp = FastAPI() #Create instance of FastAPI
 
 #Async is asynchronous: https://fastapi.tiangolo.com/async/#in-a-hurry
 #Get is an HTTPS operator
+
 @myFirstApp.get("/") #Path that the the function below us in charge of handling. 
 async def root():
     #This function gets called by FastAPI everytime it recievews a request to the URL "/""
